@@ -1,10 +1,11 @@
+import { DataStorageService } from './../shared/data-storage.service';
 import { PlaceHolderDirective } from './../shared/placeholder/placeholder.directive';
 import { AlertComponent } from './../shared/alert/alert.component';
 import { Component, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
 import { Observable, Subscription } from 'rxjs';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -20,7 +21,8 @@ export class AuthComponent implements OnDestroy {
 
   constructor(private authService: AuthService,
               private router: Router,
-              private componentFactoryResolver: ComponentFactoryResolver) {  }
+              private componentFactoryResolver: ComponentFactoryResolver,
+              private dataStorageService: DataStorageService) {  }
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
@@ -44,6 +46,7 @@ export class AuthComponent implements OnDestroy {
 
     authObs.subscribe(resData => {
       console.log(resData);
+      this.dataStorageService.fetchRecipes().subscribe();
       this.isLoading = false;
       this.router.navigate(['/recipes']);
     }, errorMessage => {

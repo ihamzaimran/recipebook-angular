@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
+import { DataStorageService } from './../shared/data-storage.service';
+import {Injectable, Injector} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {BehaviorSubject, Subject, throwError} from 'rxjs';
 import {User} from './user.model';
-import {Router} from '@angular/router';
+import {Data, Router} from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 export interface AuthResponseData {
@@ -24,7 +25,8 @@ export class AuthService {
   loginApi = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseAPIKey;
 
   constructor(private http: HttpClient,
-              private router: Router) {  }
+              private router: Router,
+              private injector: Injector) {  }
 
   singup(email: string, password: string){
     return this.http.post<AuthResponseData>(
@@ -96,7 +98,9 @@ export class AuthService {
     );
 
     if (loadedUser.token) {
+      const datatStorageService = this.injector.get<DataStorageService>(DataStorageService);
       this.user.next(loadedUser);
+      datatStorageService.fetchRecipes().subscribe();
       const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
       this.autoLogout(expirationDuration);
     }
