@@ -6,6 +6,7 @@ import {NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { logging } from 'protractor';
 
 @Component({
   selector: 'app-auth',
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 export class AuthComponent implements OnDestroy {
   isLoginMode = true;
   isLoading = false;
+  loginSignup = 'Switch to Signup';
   error: string = null;
   private closeSub: Subscription;
 
@@ -26,6 +28,12 @@ export class AuthComponent implements OnDestroy {
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
+    
+    if (this.isLoginMode) {
+      this.loginSignup = 'Switch to Signup';
+    } else {
+      this.loginSignup = 'Switch to Login';
+    }
   }
 
   onSubmit(authForm: NgForm) {
